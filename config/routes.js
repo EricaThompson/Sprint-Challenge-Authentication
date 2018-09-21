@@ -71,11 +71,12 @@ function getJokes(req, res) {
     .get(
       'https://08ad1pao69.execute-api.us-east-1.amazonaws.com/dev/random_ten'
     )
-    .then(res => {
-      console.log(res.data[0])
-      res.status(200).json(res.data[0]);
+    .then(response => {
+      console.log("jokes:", response.data) //troubleshooting.
+      res.status(200).json(response.data);
     })
     .catch(err => {
+      console.log("err:", err)
       res.status(500).json({ message: 'Error Fetching Jokes', error: err });
     });
 }
