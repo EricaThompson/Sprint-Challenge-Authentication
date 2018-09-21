@@ -20,6 +20,25 @@ const secret = "Dad Jokes R Us"
 }
 
 
+// function restricted(req, res, next) {
+
+//   const token = req.headers.authorization;
+
+//   if (token) {
+//       jwt.verify(token, secret, (err, decodedToken) => {
+//           if(err) {
+//               res.status(401).json({message: "token invalid"})
+//           } else {
+//               req.user = {username: decodedToken.username};
+//               next();
+//       }
+//   })
+//   } else {
+//   res.status(401).json({message: "no token"})
+//   }
+// }
+
+
 module.exports = server => {
   server.post('/api/register', register);
   server.post('/api/login', login);
