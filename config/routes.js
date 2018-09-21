@@ -1,6 +1,24 @@
 const axios = require('axios');
+const bcrypt = require('bcrypt');
+const knex = require('knex');
+const knexConfig = require('../knexfile');
+const db = knex(knexConfig.development);
+const jwt = require('jsonwebtoken');
 
 const { authenticate } = require('./middlewares');
+
+const secret = "Dad Jokes R Us"
+   function generateToken(user) {
+    const payload = {
+        username: user.username
+    };
+    const options = {
+        expiresIn: '1h',
+        jwtid: '12345',
+    }
+    return jwt.sign(payload, secret, options)
+}
+
 
 module.exports = server => {
   server.post('/api/register', register);
@@ -10,10 +28,40 @@ module.exports = server => {
 
 function register(req, res) {
   // implement user registration
+  const creds = req.body;
+  const hash = bcrypt.hashSync(creds.password, 10);
+  creds.password = hash;
+
+  db('users')
+    .insert(creds)
+    .then(ids => {
+      const id = ids[0];
+      const token = generateToken(creds);
+      res.status(201).json({ token, id });
+    })
+    .catch(err => {
+      console.log('/api/register POST error:', err);
+      res.status(500).send('Please try again later');
+    });
+
+
 }
 
 function login(req, res) {
   // implement user login
+  const creds = req.body;
+
+  db('users')
+    .where({username: creds.username})
+    .first()
+    .then(user => {
+      if (user && bcrypt.compareSync(creds.password, user.password)){
+        const token = generateToken(user);
+        res.status(200).json({ token });
+    } else {
+        res.status(401).json({message: 'You shall not pass!'});
+      }
+    })
 }
 
 function getJokes(req, res) {
