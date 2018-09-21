@@ -20,23 +20,6 @@ const secret = "Dad Jokes R Us"
 }
 
 
-// function restricted(req, res, next) {
-
-//   const token = req.headers.authorization;
-
-//   if (token) {
-//       jwt.verify(token, secret, (err, decodedToken) => {
-//           if(err) {
-//               res.status(401).json({message: "token invalid"})
-//           } else {
-//               req.user = {username: decodedToken.username};
-//               next();
-//       }
-//   })
-//   } else {
-//   res.status(401).json({message: "no token"})
-//   }
-// }
 
 
 module.exports = server => {
@@ -89,9 +72,20 @@ function getJokes(req, res) {
       'https://08ad1pao69.execute-api.us-east-1.amazonaws.com/dev/random_ten'
     )
     .then(res => {
-      res.status(200).json(res.data);
+      console.log(res.data[0])
+      res.status(200).json(res.data[0]);
     })
     .catch(err => {
       res.status(500).json({ message: 'Error Fetching Jokes', error: err });
     });
 }
+
+
+// async function getJokes() {
+//   try {
+//     const response = await axios.get('https://08ad1pao69.execute-api.us-east-1.amazonaws.com/dev/random_ten');
+
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
